@@ -105,6 +105,10 @@
           }
         }
       }
-    }},
-  "defaultProject": "tonejs2"
+    }
+  },
+  "defaultProject": "tonejs2",
+  "cli": {
+    "analytics": false
+  }
 }
