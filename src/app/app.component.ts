@@ -1,35 +1,43 @@
-import { Component, ViewChild, AfterViewInit } from '@angular/core';
-import * as Tone from "tone";
+import { Component, ViewChild, AfterViewInit, OnDestroy } from '@angular/core';
 import { GridOptions, Grid } from './grid/grid.component';
+import { Sequencer } from './sequencer';
+import { Subscription } from 'rxjs';
 
 @Component({
     selector: 'app-root',
     template: `
-        <button type="button" (click)="play()">play</button>
+        <button type="button" (click)="play()">play/stop</button>
         <div>
             <grid [opt]="gridOptions" #grid></grid>
         </div>
     `,
     styles: []
 })
-export class AppComponent implements AfterViewInit {
+export class AppComponent implements AfterViewInit, OnDestroy {
+    ngOnDestroy(): void {
+        this.beatSub.unsubscribe();
+    }
 
     @ViewChild("grid") grid: Grid;
+    seq = new Sequencer();
+    beatSub: Subscription;
 
     ngAfterViewInit(): void {
-        console.log(this.grid)
+
+        this.grid.setRowState(0, [0, 4, 8, 12]);
+        this.grid.setRowState(1, [2, 6, 10, 14]);
+        this.onGridChange(this.grid);
+        this.beatSub = this.seq.beat$.subscribe(b => this.grid.setBeat(b));
     }
     
     play() {
-        console.log("PLAY");
-
-        //create a synth and connect it to the master output (your speakers)
-        const synth = new Tone.Synth().toMaster();
-
-        //play a middle 'C' for the duration of an 8th note
-        synth.triggerAttackRelease("C4", "8n");
+        this.seq.play();
     }
 
+    onGridChange = (grid: Grid) => {
+        this.seq.update(grid);
+    }
+    
     gridOptions: GridOptions = {
         x: 100,
         y: 100,
@@ -37,6 +45,6 @@ export class AppComponent implements AfterViewInit {
         cols: 16,
         cellSize: 60,
         padding: 2,
-        //onChange: onGridChange
+        onChange: this.onGridChange,
     };
 }

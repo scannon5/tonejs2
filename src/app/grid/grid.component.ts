@@ -22,6 +22,7 @@ export class Grid implements AfterViewInit  {
     ctx: CanvasRenderingContext2D;
 
     public cellStates: number[][];
+    private beatNumber: number = null;
 
     constructor () {
     }
@@ -72,7 +73,18 @@ export class Grid implements AfterViewInit  {
                     this.opt.cellSize - (2 * this.opt.padding), 
                     this.opt.cellSize - (2 * this.opt.padding));
             }
-        }            
+        }
+        
+        if (this.beatNumber != null) {
+            this.ctx.fillStyle = "#ff0";
+            this.forEachRow(r => {
+                this.ctx.fillRect(
+                    (this.beatNumber + 0.5) * this.opt.cellSize - 5, 
+                    (r + 0.5) * this.opt.cellSize - 5, 
+                    10, 
+                    10);
+            })
+        }
     }
 
     getCell = (x: number, y: number) => {
@@ -104,18 +116,34 @@ export class Grid implements AfterViewInit  {
         }
     }
 
-    // moveHandler(e: any) {
-    //     var c = this.getCell(e.x, e.y);
-    //     //console.log(c);
-    //     //clearGrid();
-    //     //this.cellStates[c.x][c.y] = 2;
+    public setRowState(row: number, cells: number[]) {
+        this.clearRow(row);
+        cells.forEach(x => {
+            this.cellStates[row][x] = 1;
+        });
+        this.drawGrid();
+    }
 
-    //     //drawGrid();
-    //     //console.log(e);
-    //     //console.log(`${e.clientX},${e.clientY}`);
+    private clearRow(row: number) {
+        this.forEachCol(c => this.cellStates[row][c] = 0);
+    }
 
-    //     //ctx.strokeRect(e.x - 5, e.y - 5, 10, 10);
-    // }
+    private forEachCol(f: (c: number) => void) {
+        for(let c = 0; c < this.opt.cols; c++) {
+            f(c);
+        }
+    }
+
+    private forEachRow(f: (r: number) => void) {
+        for(let r = 0; r < this.opt.rows; r++) {
+            f(r);
+        }
+    }
+    public setBeat(beat: number) {
+        this.beatNumber = beat;
+        this.drawGrid();
+    }
+
 
     
 }
