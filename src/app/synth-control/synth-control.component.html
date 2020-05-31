@@ -1,0 +1,8 @@
+<ng-container *ngIf="blob">
+    <select [(ngModel)]="blob.osc_type" (ngModelChange)="changed()">
+        <option value="sine">sine</option>
+        <option value="square">square</option>
+        <option value="triangle">triangle</option>
+        <option value="sawtooth">sawtooth</option>
+    </select>
+</ng-container>

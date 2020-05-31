@@ -6,6 +6,7 @@ export class Sequencer {
 
     bassdrum: any;
     hihat: any;
+    synth1: any;
 
     range1: any;
     range1display: any;
@@ -37,6 +38,7 @@ export class Sequencer {
     private init() {
         this.bassdrum = new Tone.MembraneSynth().toMaster();
         this.hihat = new Tone.NoiseSynth().toMaster();
+        this.synth1 = new Tone.MonoSynth().toMaster();
     }
 
     private triggerBassdrum = (time: any) => {
@@ -44,6 +46,9 @@ export class Sequencer {
     }
     private triggerHihat = (time: any) => {
         this.hihat.triggerAttackRelease('4n', time)
+    }
+    private triggerSynth1 = (time: any) => {
+        this.synth1.triggerAttackRelease("C2", "8n");2
     }
 
     public update(grid: Grid) {
@@ -61,6 +66,7 @@ export class Sequencer {
 
         assign(0, this.triggerBassdrum);
         assign(1, this.triggerHihat);
+        assign(2, this.triggerSynth1);
 
         this.scheduleDrawing();
 
@@ -83,6 +89,10 @@ export class Sequencer {
                 beat(b++, `0:${n}:${s}`);
             }
         }
+    }
+
+    synth1_changed(blob: any) {
+        this.synth1.oscillator.type = blob.osc_type;
     }
 
 }

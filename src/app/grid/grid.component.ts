@@ -122,6 +122,7 @@ export class Grid implements AfterViewInit  {
             this.cellStates[row][x] = 1;
         });
         this.drawGrid();
+        this.callChangeHandler();
     }
 
     private clearRow(row: number) {

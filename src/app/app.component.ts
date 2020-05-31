@@ -10,6 +10,9 @@ import { Subscription } from 'rxjs';
         <div>
             <grid [opt]="gridOptions" #grid></grid>
         </div>
+        <div>
+            <synth-control [blob]="synth1_blob" (onChanged)="synth1_changed()"></synth-control>
+        </div>
     `,
     styles: []
 })
@@ -21,12 +24,14 @@ export class AppComponent implements AfterViewInit, OnDestroy {
     @ViewChild("grid") grid: Grid;
     seq = new Sequencer();
     beatSub: Subscription;
+    synth1_blob: any = {
+        //osc_type: "sine"
+    };
 
     ngAfterViewInit(): void {
-
         this.grid.setRowState(0, [0, 4, 8, 12]);
-        this.grid.setRowState(1, [2, 6, 10, 14]);
-        this.onGridChange(this.grid);
+        //this.grid.setRowState(1, [2, 6, 10, 14]);
+        this.grid.setRowState(2, [0, 6]);
         this.beatSub = this.seq.beat$.subscribe(b => this.grid.setBeat(b));
     }
     
@@ -38,10 +43,14 @@ export class AppComponent implements AfterViewInit, OnDestroy {
         this.seq.update(grid);
     }
     
+    synth1_changed() {
+        this.seq.synth1_changed(this.synth1_blob);
+    }
+
     gridOptions: GridOptions = {
         x: 100,
         y: 100,
-        rows: 2,
+        rows: 3,
         cols: 16,
         cellSize: 60,
         padding: 2,
